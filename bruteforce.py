@@ -1,5 +1,5 @@
 import rarfile,zipfile
-import datetime
+import datetime, time
 from threading import Thread
 import optparse
 import itertools
@@ -14,13 +14,16 @@ def extractFile(arFile, attempt):
     try:
         arFile.extractall(pwd=attempt)
         print (f"Password found! Password is {attempt}")
-        exit(0)
+        return True
     except Exception as e:
         pass
-    if datetime.datetime.now().second%20==0:
+    if datetime.datetime.now().microsecond % 100 == 0:
         print (f"Attempting {attempt}...")
+        return False
 
 def main():
+    start_time = time.time()
+    
     parser = optparse.OptionParser("usage%prog --fr <rarfile> -c <charset> -n <size>")
     parser.add_option('--fr', dest='rname', type='string', help='specify rar file')
     parser.add_option('--fz', dest='zname', type='string', help='specify zip file')
@@ -42,12 +45,18 @@ def main():
 
     size = int(size)
     for attempt in bruteforce(charset, size):
-		# match it against your password, or whatever
-        extractFile(arFile,attempt)
+        # match it against your password, or whatever
+        done = extractFile(arFile,attempt)
+        if done: break
 
-        #uncomment below lines if you want to use multiple threads
-        #t = Thread(target=extractFile, args=(arFile,attempt))
-        #t.start()
+        # uncomment below lines if you want to use multiple threads
+        # t = Thread(target=extractFile, args=(arFile,attempt))
+        # t.start()
+        
+    end_time = time.time()
+    print (f"Ran in {round(end_time - start_time, 2)} seconds.")
+    
+    exit(0)
 
 if __name__=='__main__':
     main()
