@@ -12,10 +12,10 @@ def bruteforce(charset, maxlength):
         for i in range(1, maxlength + 1)))
 def extractFile(arFile, attempt):
     try:
-        arFile.extractall(pwd=attempt)
+        arFile.extractall(pwd=attempt.encode())
         print (f"Password found! Password is {attempt}")
         return True
-    except Exception as e:
+    except Exception:
         pass
     if datetime.datetime.now().microsecond % 100 == 0:
         print (f"Attempting {attempt}...")
