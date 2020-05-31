@@ -6,7 +6,6 @@ import itertools
 
 rarfile.UNRAR_TOOL="unrar"
 
-
 def bruteforce(charset, maxlength):
     return (''.join(candidate)
         for candidate in itertools.chain.from_iterable(itertools.product(charset, repeat=i)
@@ -14,12 +13,12 @@ def bruteforce(charset, maxlength):
 def extractFile(arFile, attempt):
     try:
         arFile.extractall(pwd=attempt)
-        print "Password found! password is %s"%attempt
+        print (f"Password found! Password is {attempt}")
         exit(0)
-    except Exception,e:
+    except Exception as e:
         pass
     if datetime.datetime.now().second%20==0:
-        print 'At %s'%attempt
+        print (f"Attempting {attempt}...")
 
 def main():
     parser = optparse.OptionParser("usage%prog --fr <rarfile> -c <charset> -n <size>")
@@ -29,7 +28,7 @@ def main():
     parser.add_option('-n', dest='size', type='string', help='size of password')
     (options, args) = parser.parse_args()
     if (options.rname == None and options.zname == None) or (options.charset == None) or (options.size == None):
-        print parser.usage
+        print (parser.usage)
         exit(0)
     else:
         if options.rname:
@@ -43,13 +42,12 @@ def main():
 
     size = int(size)
     for attempt in bruteforce(charset, size):
-    # match it against your password, or whatever
+		# match it against your password, or whatever
         extractFile(arFile,attempt)
 
         #uncomment below lines if you want to use multiple threads
         #t = Thread(target=extractFile, args=(arFile,attempt))
         #t.start()
-
 
 if __name__=='__main__':
     main()
